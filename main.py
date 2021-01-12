@@ -4,10 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import cv2
-import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 import sys
+from CNN_Model import create_CNN_model
 
 #get directory path
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -19,6 +17,8 @@ labels = []
 def read_images():
     '''
         Read the dataset of images. Murder Hornets and Bees. 
+
+        Return True if successful 
     '''
     global features, labels
 
@@ -82,6 +82,8 @@ def read_images():
         elif answer == 'N':
             break
 
+    return True
+
 def save_processed_data(features,labels):
     '''
         save the features and the labels
@@ -122,6 +124,7 @@ def load_processed_data():
 if __name__ == '__main__':
 
     exitloop1 = False
+    data_ready = False
 
     while True:
         #process new data?
@@ -129,6 +132,7 @@ if __name__ == '__main__':
         if answer2 == 'Y':
             #read in the image dataset
             read_images()
+            data_ready = True
             break
         elif answer2 == 'N':
             #read existing data?
@@ -139,6 +143,7 @@ if __name__ == '__main__':
                     load_success = load_processed_data()
                     #if not success ask again
                     if load_success:
+                        data_ready = True
                         exitloop1 = True #to exit outer loop 
                         break
                 elif answer2_5 == 'N':
@@ -150,9 +155,15 @@ if __name__ == '__main__':
     
     #run model?
     while True:
-        answer3 = input('Would you like to run a CNN?[Y/N] ')
+        answer3 = input('Would you like to create a CNN Model?[Y/N] ')
         if answer3 == 'Y':
-            #...
+            if not data_ready:
+                print('No pre-processed Data Available. Terminating...')
+                break
+            
+            #create new model
+            create_CNN_model(features,labels)
+
             break 
         elif answer3 == 'N':
             break
