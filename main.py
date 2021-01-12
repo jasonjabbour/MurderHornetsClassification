@@ -13,6 +13,8 @@ dir_path = dir_path.replace('\\','/')
 seed = 1122021
 features = []
 labels = []
+training_data = []
+
 
 def read_images():
     '''
@@ -20,19 +22,18 @@ def read_images():
 
         Return True if successful 
     '''
-    global features, labels
+    global features, labels, training_data
 
     image_size = 200
     bee_label = 0 
     hornet_label = 1
 
     #the paths to the data
-    path_lst = ['Bees/train','MurderHornets']
+    path_lst = ['Bees','MurderHornets']
     #create path
     path_bees = dir_path + '/Data/' + path_lst[0]
     path_hornets = dir_path + '/Data/' + path_lst[1]
 
-    training_data = []
     bee_img_count = 1
     #read in all the bees images
     for bee_img in os.listdir(path_bees):
@@ -58,13 +59,12 @@ def read_images():
         #add image and its label
         training_data.append([image_array,hornet_label])
 
+
     #shuffle data
     random.seed(seed)
     random.shuffle(training_data)
 
     #separate features and labels 
-    features = []
-    labels = []
     for feat,lab in training_data:
         features.append(feat)
         labels.append(lab)
@@ -167,6 +167,7 @@ if __name__ == '__main__':
             break 
         elif answer3 == 'N':
             break
+
 
 
 #print(image_array.shape)
