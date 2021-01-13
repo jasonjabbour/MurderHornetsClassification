@@ -7,12 +7,10 @@ import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation, Flatten, Conv2D, MaxPooling2D
 
-#model = Sequential()
-
 
 def create_CNN_model(features, labels):
     '''
-        Start CNN
+        Start Convolutional Neural Network
     '''
 
     #normalize data. Scale pixel data (max is 255)
@@ -43,6 +41,6 @@ def create_CNN_model(features, labels):
 
     model.compile(loss='binary_crossentropy', optimizer='adam',metrics=['accuracy'])
 
-    model.fit(features,labels,batch_size=32,validation_split=.1)
-    return 
+    model.fit(features,labels,batch_size=50,validation_split=.1)
+    return
 

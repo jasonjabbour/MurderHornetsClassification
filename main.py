@@ -5,6 +5,9 @@ import matplotlib.pyplot as plt
 import os
 import cv2
 import sys
+import time
+import seaborn
+import pandas as pd
 from CNN_Model import create_CNN_model
 
 #get directory path
@@ -15,6 +18,10 @@ features = []
 labels = []
 training_data = []
 
+#plotting variables
+bees_count = 0 
+hornet_count = 0 
+
 
 def read_images():
     '''
@@ -22,7 +29,7 @@ def read_images():
 
         Return True if successful 
     '''
-    global features, labels, training_data
+    global features, labels, training_data, bees_count, hornet_count
 
     image_size = 200
     bee_label = 0 
@@ -34,7 +41,8 @@ def read_images():
     path_bees = dir_path + '/Data/' + path_lst[0]
     path_hornets = dir_path + '/Data/' + path_lst[1]
 
-    bee_img_count = 1
+    #count number of images
+    bees_count = 0
     #read in all the bees images
     for bee_img in os.listdir(path_bees):
         #for each bee_img name, join it to the path of bees to read it
@@ -44,12 +52,24 @@ def read_images():
         #add image and its label
         training_data.append([image_array,bee_label])
 
+        #rotate image 3 different times
+        image_arrayRot90 = cv2.rotate(image_array,cv2.ROTATE_90_CLOCKWISE)
+        image_arrayRot180 = cv2.rotate(image_array,cv2.ROTATE_180)
+        image_arrayRot270 = cv2.rotate(image_array,cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+        #add rotated images
+        training_data.append([image_arrayRot90,bee_label])
+        training_data.append([image_arrayRot180,bee_label])
+        training_data.append([image_arrayRot270,bee_label])
+
         #only use first 352 images
-        bee_img_count+=1
-        if bee_img_count > 352:
+        bees_count+=4
+
+        if bees_count >= 352*4:
             break
 
-            
+    #count amount of images 
+    hornet_count = 0 
     #read in all the hornets images
     for horn_img in os.listdir(path_hornets):
         #for each horn_img name, join it to the path of bees to read it
@@ -59,6 +79,17 @@ def read_images():
         #add image and its label
         training_data.append([image_array,hornet_label])
 
+        #rotate image 3 different times
+        image_arrayRot90 = cv2.rotate(image_array,cv2.ROTATE_90_CLOCKWISE)
+        image_arrayRot180 = cv2.rotate(image_array,cv2.ROTATE_180)
+        image_arrayRot270 = cv2.rotate(image_array,cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+        #add rotated images
+        training_data.append([image_arrayRot90,bee_label])
+        training_data.append([image_arrayRot180,bee_label])
+        training_data.append([image_arrayRot270,bee_label])
+
+        hornet_count+=4
 
     #shuffle data
     random.seed(seed)
@@ -69,8 +100,10 @@ def read_images():
         features.append(feat)
         labels.append(lab)
   
+
     #change type...for kares array must be an np array
     features = np.array(features).reshape(-1,image_size,image_size,3) #-1 for all features, 3 for all three colors
+    labels = np.array(labels)
 
     #save data?
     while True:
@@ -119,9 +152,37 @@ def load_processed_data():
     return True
 
 
+def plot_graphics():
+    '''
+        Helper function to plot data
+    '''
+
+    #bar plot
+    count1 = bees_count #got from for loop in main.py
+    count2 = hornet_count #got from for loop in main.py
+    objects = ['Bees','Murder Hornets']
+    thecounts = [count1,count2]
+    df = pd.DataFrame({"Class":objects, "Number of Images":thecounts})
+
+    plt.figure(figsize=(8, 6))
+    splot=seaborn.barplot(x="Class",y="Number of Images",data=df)
+    for p in splot.patches:
+        splot.annotate(format(p.get_height(), '.0f'), 
+                    (p.get_x() + p.get_width() / 2., p.get_height()), 
+                    ha = 'center', va = 'center', 
+                    size=15,
+                    xytext = (0, -12), 
+                    textcoords = 'offset points')
+    plt.xlabel("Class", size=14)
+    plt.ylabel("Number of Images", size=14)
+    plt.title('Class Division of Bees and Murder Hornet Images after Data Augmentation')
+    plt.ylim(0,1500)
+    plt.show()
 
 #driver
 if __name__ == '__main__':
+
+    plot_data = False
 
     exitloop1 = False
     data_ready = False
@@ -167,6 +228,14 @@ if __name__ == '__main__':
             break 
         elif answer3 == 'N':
             break
+
+    
+    #only if manually specified
+    if plot_data:
+        plot_graphics()
+
+        
+
 
 
 
