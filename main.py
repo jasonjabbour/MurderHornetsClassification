@@ -85,9 +85,9 @@ def read_images():
         image_arrayRot270 = cv2.rotate(image_array,cv2.ROTATE_90_COUNTERCLOCKWISE)
 
         #add rotated images
-        training_data.append([image_arrayRot90,bee_label])
-        training_data.append([image_arrayRot180,bee_label])
-        training_data.append([image_arrayRot270,bee_label])
+        training_data.append([image_arrayRot90,hornet_label])
+        training_data.append([image_arrayRot180,hornet_label])
+        training_data.append([image_arrayRot270,hornet_label])
 
         hornet_count+=4
 
@@ -235,10 +235,6 @@ if __name__ == '__main__':
         plot_graphics()
 
         
-
-
-
-
 #print(image_array.shape)
 # plt.imshow(image_arry)
 # plt.show()
