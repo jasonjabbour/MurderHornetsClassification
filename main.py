@@ -8,7 +8,7 @@ import sys
 import time
 import seaborn
 import pandas as pd
-from CNN_Model import create_CNN_model
+from CNN_Model import create_CNN_model, predict_image
 
 #get directory path
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -17,6 +17,7 @@ seed = 1122021
 features = []
 labels = []
 training_data = []
+image_size = 200
 
 #plotting variables
 bees_count = 0 
@@ -29,9 +30,8 @@ def read_images():
 
         Return True if successful 
     '''
-    global features, labels, training_data, bees_count, hornet_count
+    global features, labels, training_data, bees_count, hornet_count, image_size
 
-    image_size = 200
     bee_label = 0 
     hornet_label = 1
 
@@ -229,7 +229,16 @@ if __name__ == '__main__':
         elif answer3 == 'N':
             break
 
-    
+    while True:
+        answer4 = input('Would you like to used saved model to predict new image?[Y/N] ')
+        if answer4 == 'Y':
+            print('Locating image in folder: image_for_prediction...')
+            predict_image(image_size)
+            break
+        elif answer4 == 'N':
+            break
+
+
     #only if manually specified
     if plot_data:
         plot_graphics()
