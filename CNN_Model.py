@@ -78,7 +78,9 @@ def create_CNN_model(features, labels):
 
 def predict_image(image_size):
     '''
-        Read first image from the predict folder and classify it
+        Image must be named "feedme"
+        Read first image from the predict folder with the name "feedme" and classify it
+        Return the 0 or 1, 0 for be, 1 for Murder hornet
     '''
 
     categories = ['Bumble Bee','Murder Hornet']
@@ -89,16 +91,18 @@ def predict_image(image_size):
     image_exists = False
     #read in the image and proccess it
     for img in os.listdir(image_path):
-        image_array = cv2.imread(os.path.join(image_path,img),cv2.IMREAD_COLOR)
-        image_array = cv2.resize(image_array,(image_size,image_size))
-        image_array = np.array(image_array).reshape(-1,image_size,image_size,3)
 
-        image_exists = True
-        #only read the first image
-        break
+        if "feedme" in img:
+            image_array = cv2.imread(os.path.join(image_path,img),cv2.IMREAD_COLOR)
+            image_array = cv2.resize(image_array,(image_size,image_size))
+            image_array = np.array(image_array).reshape(-1,image_size,image_size,3)
+
+            image_exists = True
+            #only read the first image
+            break
 
     if not image_exists:
-        print('No image found in folder: image_for_prediction \nPlease add an image to the folder and try again')
+        print('No image found in folder: image_for_prediction  named "feedme"\nPlease add an image to the folder and try again')
         return
 
     #try to load the following saved model
@@ -113,6 +117,7 @@ def predict_image(image_size):
     image_class =categories[int(prediction[0][0])]
     
     print('-'*40,'\n','Image class:', image_class,'\n'+'-'*40)
+    return int(prediction[0][0])
 
     
 
